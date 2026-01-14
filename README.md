@@ -29,6 +29,18 @@ pip install -r requirements.txt
 export OPENAI_API_KEY="your-api-key-here"
 ```
 
+## 2つの使い方
+
+このツールは2つの方法で利用できます：
+
+### 1. CLI版（コマンドライン）
+Pythonスクリプトを直接実行して画像を生成します。バッチ処理や自動化に適しています。
+
+### 2. Web版（ブラウザ）
+Docker Composeで起動するWebインターフェース。視覚的な操作で画像を生成・プレビューできます。
+
+---
+
 ## プロンプト管理システム
 
 このツールは**ベースプロンプト**と**パターン**を分離して管理する仕組みを採用しています。
@@ -58,7 +70,9 @@ prompts/
 - シチュエーション（川辺、都市公園、レストラン等）
 - 季節や天候（春の桜、夏の太陽、秋の紅葉、冬の雪等）
 
-## 使い方
+---
+
+## CLI版の使い方
 
 ### 1. パターン一覧を表示
 
@@ -152,6 +166,115 @@ generated_images/
 ファイル名の形式：
 - `kappa_YYYYMMDD_HHMMSS_pN.png` - パターン番号Nを使用した場合
 - `kappa_YYYYMMDD_HHMMSS.png` - カスタムプロンプトを使用した場合
+
+---
+
+## Web版の使い方（Docker Compose）
+
+Web版はDockerを使用してローカル環境を汚さずに実行できます。ブラウザから簡単に画像生成が可能です。
+
+### 必要な環境
+
+- Docker Desktop for Mac
+- Docker Compose（Docker Desktopに含まれています）
+- OpenAI APIキー（環境変数に設定済み）
+
+### セットアップ
+
+1. **OpenAI APIキーの確認**
+
+既にMacのシェルに設定されているか確認：
+
+```bash
+echo $OPENAI_API_KEY
+```
+
+設定されていない場合は以下で設定：
+
+```bash
+export OPENAI_API_KEY='your-api-key-here'
+```
+
+永続化する場合は `~/.zshrc` に追加：
+
+```bash
+echo 'export OPENAI_API_KEY="your-api-key-here"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+2. **起動スクリプトに実行権限を付与**
+
+```bash
+chmod +x start.sh stop.sh
+```
+
+### 起動方法
+
+```bash
+./start.sh
+```
+
+起動スクリプトが以下を自動的に実行します：
+- Dockerコンテナのビルドと起動
+- 動的なポート割り当て
+- ブラウザの自動起動
+
+コンソールに表示されるURL（例：`http://localhost:52341`）からアクセスできます。
+
+### Web版の機能
+
+- **共通プロンプト編集**: かっぱの基本的な特徴を記述
+- **パターン選択**: 25種類のパターンから選択、またはカスタム入力
+- **画像サイズ選択**: 1024x1024, 1024x1792, 1792x1024
+- **画質選択**: standard, hd
+- **リアルタイムプレビュー**: 生成された画像をブラウザで即座に確認
+- **ダウンロード**: 生成した画像を直接ダウンロード
+
+### 停止方法
+
+```bash
+./stop.sh
+```
+
+### Web版のトラブルシューティング
+
+#### ポートが取得できない
+
+```bash
+# コンテナのログを確認
+docker compose logs app
+
+# コンテナを再起動
+./stop.sh
+./start.sh
+```
+
+#### APIキーのエラー
+
+```bash
+# 環境変数を確認
+echo $OPENAI_API_KEY
+
+# 設定し直す
+export OPENAI_API_KEY='your-api-key-here'
+
+# コンテナを再起動
+./stop.sh
+./start.sh
+```
+
+#### コンテナが起動しない
+
+```bash
+# Dockerが起動しているか確認
+docker ps
+
+# イメージを再ビルド
+docker compose build --no-cache
+./start.sh
+```
+
+---
 
 ## パターンのカスタマイズ
 

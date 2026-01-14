@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kappa-web
+    ports:
+      # ホストポートを指定しないことで、動的にポート割り当て
+      - "8501"
+    environment:
+      # MacのシェルからOPENAI_API_KEYを継承
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      # 生成された画像を永続化
+      - ./generated_images:/app/generated_images
+      # プロンプトファイルを編集可能に
+      - ./prompts:/app/prompts
+    restart: unless-stopped

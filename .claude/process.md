@@ -9,7 +9,9 @@
 ---
 
 ## NOW (DOING)
-- なし
+- [ ] Streamlit Web版の実装
+  - 状況：Docker Compose + Streamlit + 動的ポート割り当てで実装中
+  - 次：Dockerfile、docker-compose.yml、app.py、起動スクリプトを作成
 
 ## NEXT (TODO)
 - なし

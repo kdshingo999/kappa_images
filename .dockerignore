@@ -1,0 +1,53 @@
+# Git関連
+.git/
+.gitignore
+
+# 生成画像（ボリュームマウントするため）
+generated_images/
+
+# Python関連
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# macOS
+.DS_Store
+
+# 環境変数ファイル
+.env
+.env.local
+
+# Claude Code設定
+.claude/
+
+# スクリプト（コンテナ外で実行）
+start.sh
+stop.sh
+
+# ドキュメント（必要に応じてコメントアウト）
+# README.md
+
+# Docker関連
+docker-compose.yml
+Dockerfile
+.dockerignore
