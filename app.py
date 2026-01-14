@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 """
 かっぱキャラクター画像生成 Streamlit Webアプリ
+Responses API + 画像入力対応版
 """
 
 import os
-import sys
 import base64
 import streamlit as st
 from datetime import datetime
 from pathlib import Path
 from openai import OpenAI
-from io import BytesIO
 
 
 def load_base_prompt(base_prompt_file: str = "prompts/base_prompt.txt") -> str:
@@ -23,30 +22,59 @@ def load_base_prompt(base_prompt_file: str = "prompts/base_prompt.txt") -> str:
 
 
 def load_patterns(patterns_file: str = "prompts/patterns.txt") -> list:
-    """パターンファイルから有効なパターンを読み込む"""
+    """
+    パターンファイルから有効なパターンを読み込む
+    空白行で区切られた複数行のパターンに対応
+    """
     try:
         with open(patterns_file, "r", encoding="utf-8") as f:
             lines = f.readlines()
 
         patterns = []
+        current_pattern = []
+
         for line in lines:
-            line = line.strip()
-            if line and not line.startswith("#"):
-                patterns.append(line)
+            line_stripped = line.strip()
+
+            # コメント行をスキップ
+            if line_stripped.startswith("#"):
+                continue
+
+            # 空行でパターン区切り
+            if not line_stripped:
+                if current_pattern:
+                    patterns.append("\n".join(current_pattern))
+                    current_pattern = []
+            else:
+                current_pattern.append(line_stripped)
+
+        # 最後のパターンを追加
+        if current_pattern:
+            patterns.append("\n".join(current_pattern))
 
         return patterns
     except FileNotFoundError:
         return []
 
 
-def generate_image(
+def image_to_data_uri(image_bytes: bytes) -> str:
+    """画像バイトをdata URIに変換"""
+    b64 = base64.b64encode(image_bytes).decode()
+    return f"data:image/png;base64,{b64}"
+
+
+def generate_image_with_responses_api(
     prompt: str,
-    size: str = "1024x1024",
-    quality: str = "standard",
+    base_images: list = None,
     api_key: str = None
 ) -> tuple:
     """
-    かっぱのキャラクター画像を生成する
+    Responses APIを使って画像生成（ベース画像対応）
+
+    Args:
+        prompt: プロンプトテキスト
+        base_images: ベース画像のdata URIリスト（任意）
+        api_key: OpenAI APIキー
 
     Returns:
         tuple: (image_bytes, error_message)
@@ -57,24 +85,46 @@ def generate_image(
     try:
         client = OpenAI(api_key=api_key)
 
-        response = client.images.generate(
+        # contentを構築
+        content = [{"type": "input_text", "text": prompt}]
+
+        # ベース画像があれば追加（最大5枚）
+        if base_images:
+            for img_uri in base_images[:5]:
+                content.append({
+                    "type": "input_image",
+                    "image_url": img_uri
+                })
+
+        # Responses APIで画像生成
+        response = client.responses.create(
             model="gpt-image-1.5",
-            prompt=prompt,
-            size=size,
-            quality=quality,
-            n=1,
+            input=[
+                {
+                    "role": "user",
+                    "content": content
+                }
+            ],
+            tools=[{
+                "type": "image_generation",
+                "input_fidelity": "high" if base_images else "low",
+                "action": "edit" if base_images else "generate"
+            }]
         )
 
-        image_base64 = response.data[0].b64_json
-        image_bytes = base64.b64decode(image_base64)
+        # 生成画像を取得
+        for output in response.output:
+            if output.type == "image_generation_call":
+                image_bytes = base64.b64decode(output.result)
+                return image_bytes, None
 
-        return image_bytes, None
+        return None, "画像が生成されませんでした"
 
     except Exception as e:
         return None, f"エラーが発生しました: {e}"
 
 
-def save_image_to_file(image_bytes: bytes, prompt: str, size: str, quality: str, pattern_number: int = None):
+def save_image_to_file(image_bytes: bytes, prompt: str, pattern_number: int = None):
     """生成された画像をファイルに保存"""
     output_dir = Path("generated_images")
     output_dir.mkdir(exist_ok=True)
@@ -94,8 +144,6 @@ def save_image_to_file(image_bytes: bytes, prompt: str, size: str, quality: str,
         f.write(f"生成日時: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write(f"モデル: gpt-image-1.5\n")
         f.write(f"画像ファイル: {image_filename}\n")
-        f.write(f"サイズ: {size}\n")
-        f.write(f"画質: {quality}\n")
         if pattern_number:
             f.write(f"パターン番号: {pattern_number}\n")
         f.write(f"\nプロンプト:\n{prompt}\n")
@@ -111,35 +159,46 @@ def main():
         layout="wide"
     )
 
-    st.title("🥒 かっぱキャラクター画像生成ツール")
-    st.markdown("OpenAI GPT Image 1.5を使用して、かっぱのキャラクター画像を生成します")
+    st.title("🥒 かっぱキャラクター画像生成ツール（改良版）")
+    st.markdown("✨ ベース画像をアップロード可能。プロンプトに画像サイズ・画質を記述。")
 
     # サイドバー設定
     st.sidebar.header("⚙️ 設定")
-
-    size = st.sidebar.selectbox(
-        "画像サイズ",
-        ["1024x1024", "1024x1792", "1792x1024"],
-        index=0
-    )
-
-    quality = st.sidebar.selectbox(
-        "画質",
-        ["standard", "hd"],
-        index=0
-    )
-
     st.sidebar.markdown("---")
     st.sidebar.markdown("### 💡 ヒント")
-    st.sidebar.markdown("- 共通プロンプトはかっぱの基本特徴を記述")
-    st.sidebar.markdown("- パターンでスタイルやポーズを指定")
-    st.sidebar.markdown("- カスタムプロンプトで独自の指示も可能")
+    st.sidebar.markdown("- ベース画像は任意でアップロード（最大5枚）")
+    st.sidebar.markdown("- プロンプトに画像サイズや画質を記述")
+    st.sidebar.markdown("- パターンは空白行で区切る（複数行OK）")
+    st.sidebar.markdown("- 例: `画像サイズ: 1024x1024, 画質: HD`")
 
     # APIキーの確認
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         st.error("⚠️ OPENAI_API_KEY環境変数が設定されていません")
         st.stop()
+
+    # ベース画像アップロード
+    st.header("📤 ベース画像（任意）")
+    uploaded_files = st.file_uploader(
+        "ベース画像をアップロード（最大5枚、任意）",
+        type=["png", "jpg", "jpeg"],
+        accept_multiple_files=True,
+        help="ベース画像を使うと、その画像を参考に新しい画像を生成します"
+    )
+
+    base_image_uris = []
+    if uploaded_files:
+        if len(uploaded_files) > 5:
+            st.warning("⚠️ ベース画像は最大5枚までです。最初の5枚を使用します。")
+            uploaded_files = uploaded_files[:5]
+
+        st.markdown(f"**アップロード済み: {len(uploaded_files)}枚**")
+        cols = st.columns(min(len(uploaded_files), 5))
+        for i, file in enumerate(uploaded_files):
+            image_bytes = file.read()
+            base_image_uris.append(image_to_data_uri(image_bytes))
+            with cols[i]:
+                st.image(image_bytes, caption=f"画像{i+1}", use_container_width=True)
 
     # ベースプロンプトの読み込みと表示
     base_prompt = load_base_prompt()
@@ -153,7 +212,7 @@ def main():
         edited_base_prompt = st.text_area(
             "かっぱの基本的な特徴を記述",
             value=base_prompt,
-            height=200,
+            height=250,
             help="すべての生成に共通する、かっぱの基本的な特徴を記述します"
         )
 
@@ -171,8 +230,13 @@ def main():
 
         if pattern_mode == "パターンから選択":
             if patterns:
-                pattern_options = [f"{i+1}. {p[:60]}..." if len(p) > 60 else f"{i+1}. {p}"
-                                 for i, p in enumerate(patterns)]
+                # パターンのプレビュー表示
+                pattern_options = []
+                for i, p in enumerate(patterns):
+                    first_line = p.split('\n')[0]
+                    preview = first_line[:40] + "..." if len(first_line) > 40 else first_line
+                    pattern_options.append(f"{i+1}. {preview}")
+
                 selected_index = st.selectbox(
                     "パターンを選択",
                     range(len(patterns)),
@@ -182,9 +246,9 @@ def main():
                 pattern_number = selected_index + 1
 
                 st.text_area(
-                    "選択したパターン",
+                    "選択したパターン（複数行対応）",
                     value=pattern_prompt,
-                    height=100,
+                    height=150,
                     disabled=True
                 )
             else:
@@ -193,17 +257,38 @@ def main():
                 pattern_number = None
         else:
             pattern_prompt = st.text_area(
-                "カスタムプロンプト",
-                placeholder="例: かわいいかっぱが川で遊んでいる",
-                height=100,
-                help="ベースプロンプトに追加する独自の指示を入力します"
+                "カスタムプロンプト（複数行OK）",
+                placeholder="例:\nかわいいかっぱが川で遊んでいる\n画像サイズ: 1024x1024\n画質: HD",
+                height=150,
+                help="ベースプロンプトに追加する独自の指示を入力します（複数行OK）"
             )
             pattern_number = None
 
-    # 生成ボタン
+    # 生成ボタン（2種類）
     st.markdown("---")
 
-    if st.button("🎨 画像を生成", type="primary", use_container_width=True):
+    col_btn1, col_btn2 = st.columns(2)
+
+    with col_btn1:
+        single_generate = st.button("🎨 1枚生成", type="primary", use_container_width=True)
+
+    with col_btn2:
+        if patterns and pattern_mode == "パターンから選択":
+            batch_generate = st.button(
+                f"🎨🎨 全パターン生成（{len(patterns)}枚）",
+                use_container_width=True,
+                help="全てのパターンで画像を一括生成します"
+            )
+        else:
+            batch_generate = False
+            st.button(
+                "🎨🎨 全パターン生成（パターン選択時のみ）",
+                disabled=True,
+                use_container_width=True
+            )
+
+    # 1枚生成
+    if single_generate:
         if not edited_base_prompt.strip():
             st.error("共通プロンプトを入力してください")
             st.stop()
@@ -213,14 +298,13 @@ def main():
             st.stop()
 
         # 最終プロンプトの構築
-        final_prompt = f"{edited_base_prompt}\n{pattern_prompt}"
+        final_prompt = f"{edited_base_prompt}\n\n{pattern_prompt}"
 
         # 生成中の表示
         with st.spinner("画像を生成中... ⏳"):
-            image_bytes, error = generate_image(
+            image_bytes, error = generate_image_with_responses_api(
                 prompt=final_prompt,
-                size=size,
-                quality=quality,
+                base_images=base_image_uris if base_image_uris else None,
                 api_key=api_key
             )
 
@@ -236,8 +320,6 @@ def main():
             saved_path = save_image_to_file(
                 image_bytes=image_bytes,
                 prompt=final_prompt,
-                size=size,
-                quality=quality,
                 pattern_number=pattern_number
             )
 
@@ -254,12 +336,77 @@ def main():
             # 生成情報の表示
             with st.expander("📋 生成情報"):
                 st.markdown(f"**モデル:** gpt-image-1.5")
-                st.markdown(f"**サイズ:** {size}")
-                st.markdown(f"**画質:** {quality}")
+                if base_image_uris:
+                    st.markdown(f"**ベース画像:** {len(base_image_uris)}枚")
+                else:
+                    st.markdown(f"**ベース画像:** なし")
                 if pattern_number:
                     st.markdown(f"**パターン番号:** {pattern_number}")
                 st.markdown(f"**プロンプト:**")
                 st.code(final_prompt, language="text")
+
+    # 全パターン一括生成
+    if batch_generate:
+        if not edited_base_prompt.strip():
+            st.error("共通プロンプトを入力してください")
+            st.stop()
+
+        st.markdown("---")
+        st.header(f"🎨🎨 全パターン一括生成（{len(patterns)}枚）")
+
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+
+        success_count = 0
+        failed_patterns = []
+
+        results_container = st.container()
+
+        for i, pattern in enumerate(patterns):
+            progress = (i + 1) / len(patterns)
+            progress_bar.progress(progress)
+            status_text.text(f"生成中... [{i+1}/{len(patterns)}] パターン#{i+1}")
+
+            final_prompt = f"{edited_base_prompt}\n\n{pattern}"
+
+            image_bytes, error = generate_image_with_responses_api(
+                prompt=final_prompt,
+                base_images=base_image_uris if base_image_uris else None,
+                api_key=api_key
+            )
+
+            if error:
+                first_line = pattern.split('\n')[0]
+                failed_patterns.append((i+1, first_line[:30]))
+            else:
+                success_count += 1
+                saved_path = save_image_to_file(
+                    image_bytes=image_bytes,
+                    prompt=final_prompt,
+                    pattern_number=i+1
+                )
+
+                with results_container:
+                    col_img, col_info = st.columns([1, 2])
+                    with col_img:
+                        st.image(image_bytes, caption=f"パターン#{i+1}", use_container_width=True)
+                    with col_info:
+                        st.markdown(f"**パターン #{i+1}**")
+                        preview_text = pattern[:100] + "..." if len(pattern) > 100 else pattern
+                        st.code(preview_text, language="text")
+                        st.markdown(f"✅ 保存: `{saved_path.name}`")
+
+        # 結果サマリー
+        progress_bar.progress(1.0)
+        status_text.text("完了!")
+
+        st.markdown("---")
+        st.success(f"✅ 一括生成完了! 成功: {success_count}/{len(patterns)}")
+
+        if failed_patterns:
+            with st.expander("❌ 失敗したパターン"):
+                for num, desc in failed_patterns:
+                    st.markdown(f"- パターン#{num}: {desc}...")
 
     # フッター
     st.markdown("---")

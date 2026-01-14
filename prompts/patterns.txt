@@ -1,31 +1,52 @@
-# パターン一覧
-# 1行に1パターンを記載してください
-# 空行と#で始まる行はコメントとして無視されます
+# パターン一覧（空白行区切り、複数行記述可能）
+# 各パターンは空白行で区切ってください
+# 1つのパターン内で複数行の記述が可能です
 
-# スタイル系
+# パターン1: マスコット風 × 手を振る × 川辺の桜
 The style is charming and suitable for a mascot or children's character.
-The style is anime-inspired with bold outlines and vibrant colors.
-The style is realistic and detailed, like a nature documentary illustration.
-The style is minimalist with simple shapes and solid colors.
-The style is pixel art, retro 8-bit game character design.
-
-# ポーズ・アクション系
 The kappa is waving cheerfully with one hand raised.
-The kappa is sitting cross-legged, looking peaceful and meditative.
-The kappa is swimming gracefully in water.
-The kappa is holding a cucumber (their favorite food) and smiling.
-The kappa is jumping joyfully with arms spread wide.
-
-# シチュエーション系
 The kappa is standing by a Japanese riverside with cherry blossoms in the background.
-The kappa is in a modern city park, looking curious at urban life.
-The kappa is teaching young children about water safety.
-The kappa is working as a sushi chef in a traditional restaurant.
-The kappa is playing with colorful koi fish in a pond.
 
-# 季節・天候系
+# パターン2: アニメ風 × 座禅 × 春の桜
+The style is anime-inspired with bold outlines and vibrant colors.
+The kappa is sitting cross-legged, looking peaceful and meditative.
 The scene is set in spring with sakura petals falling around.
+
+# パターン3: リアル風 × 泳ぐ × 夏の晴天
+The style is realistic and detailed, like a nature documentary illustration.
+The kappa is swimming gracefully in water.
 The scene is set in summer with bright sunshine and blue skies.
+
+# パターン4: ミニマリスト × きゅうり × 都市公園
+The style is minimalist with simple shapes and solid colors.
+The kappa is holding a cucumber (their favorite food) and smiling.
+The kappa is in a modern city park, looking curious at urban life.
+
+# パターン5: ピクセルアート × ジャンプ × 秋の紅葉
+The style is pixel art, retro 8-bit game character design.
+The kappa is jumping joyfully with arms spread wide.
 The scene is set in autumn with red and orange maple leaves.
-The scene is set in winter with gentle snowfall.
+
+# パターン6: マスコット風 × 水の安全教育 × 夏
+The style is charming and suitable for a mascot or children's character.
+The kappa is teaching young children about water safety.
+The scene is set in summer with bright sunshine and blue skies.
+
+# パターン7: アニメ風 × 寿司職人 × 伝統的レストラン
+The style is anime-inspired with bold outlines and vibrant colors.
+The kappa is working as a sushi chef in a traditional restaurant.
+
+# パターン8: リアル風 × 鯉と遊ぶ × 池
+The style is realistic and detailed, like a nature documentary illustration.
+The kappa is playing with colorful koi fish in a pond.
 The scene is set during a gentle rain shower.
+
+# パターン9: ミニマリスト × 手を振る × 冬の雪
+The style is minimalist with simple shapes and solid colors.
+The kappa is waving cheerfully with one hand raised.
+The scene is set in winter with gentle snowfall.
+
+# パターン10: ピクセルアート × きゅうり × 春の桜
+The style is pixel art, retro 8-bit game character design.
+The kappa is holding a cucumber (their favorite food) and smiling.
+The scene is set in spring with sakura petals falling around.

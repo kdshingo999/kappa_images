@@ -34,23 +34,39 @@ def load_base_prompt(base_prompt_file: str = "prompts/base_prompt.txt") -> str:
 def load_patterns(patterns_file: str = "prompts/patterns.txt") -> list:
     """
     パターンファイルから有効なパターンを読み込む
+    空白行で区切られた複数行のパターンに対応
 
     Args:
         patterns_file: パターンファイルのパス
 
     Returns:
-        パターンのリスト（空行とコメント行を除く）
+        パターンのリスト（空白行で区切られた複数行パターン）
     """
     try:
         with open(patterns_file, "r", encoding="utf-8") as f:
             lines = f.readlines()
 
-        # 空行とコメント行を除外
         patterns = []
+        current_pattern = []
+
         for line in lines:
-            line = line.strip()
-            if line and not line.startswith("#"):
-                patterns.append(line)
+            line_stripped = line.strip()
+
+            # コメント行をスキップ
+            if line_stripped.startswith("#"):
+                continue
+
+            # 空行でパターン区切り
+            if not line_stripped:
+                if current_pattern:
+                    patterns.append("\n".join(current_pattern))
+                    current_pattern = []
+            else:
+                current_pattern.append(line_stripped)
+
+        # 最後のパターンを追加
+        if current_pattern:
+            patterns.append("\n".join(current_pattern))
 
         return patterns
     except FileNotFoundError:
@@ -60,7 +76,7 @@ def load_patterns(patterns_file: str = "prompts/patterns.txt") -> list:
 
 def list_patterns(patterns: list):
     """
-    利用可能なパターン一覧を表示する
+    利用可能なパターン一覧を表示する（複数行対応）
 
     Args:
         patterns: パターンのリスト
@@ -68,7 +84,10 @@ def list_patterns(patterns: list):
     print("\n利用可能なパターン一覧:")
     print("=" * 60)
     for i, pattern in enumerate(patterns, 1):
-        print(f"{i:2d}. {pattern}")
+        # 複数行パターンの最初の行のみ表示
+        first_line = pattern.split('\n')[0]
+        preview = first_line[:70] + "..." if len(first_line) > 70 else first_line
+        print(f"{i:2d}. {preview}")
     print("=" * 60)
 
 

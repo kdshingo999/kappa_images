@@ -50,7 +50,7 @@ Docker Composeで起動するWebインターフェース。視覚的な操作で
 ```
 prompts/
 ├── base_prompt.txt    # 共通のかっぱの特徴（ベースプロンプト）
-└── patterns.txt       # パターン一覧（スタイル、ポーズ、シチュエーション等）
+└── patterns.txt       # パターン一覧（空白行区切り、複数行記述可能）
 ```
 
 ### base_prompt.txt
@@ -64,11 +64,26 @@ prompts/
 
 ### patterns.txt
 
-様々なバリエーションを1行ずつ記述します：
+様々なバリエーションを**空白行で区切って**記述します（複数行記述可能）：
+
+**記述例**：
+```
+# パターン1の説明
+The style is charming and suitable for a mascot.
+The kappa is waving cheerfully.
+The scene is set in spring with cherry blossoms.
+
+# パターン2の説明（空白行で区切る）
+The style is anime-inspired with bold outlines.
+The kappa is sitting peacefully.
+```
+
+**パターンの要素**：
 - スタイル（マスコット風、アニメ風、リアル風、ピクセルアート等）
-- ポーズ（手を振る、座る、泳ぐ、ジャンプする等）
+- ポーズ・アクション（手を振る、座る、泳ぐ、ジャンプする等）
 - シチュエーション（川辺、都市公園、レストラン等）
 - 季節や天候（春の桜、夏の太陽、秋の紅葉、冬の雪等）
+- 画像サイズや画質の指定（任意）
 
 ---
 
@@ -223,12 +238,19 @@ chmod +x start.sh stop.sh
 
 ### Web版の機能
 
+- **ベース画像アップロード**: 最大5枚の参考画像をアップロード可能（任意）
 - **共通プロンプト編集**: かっぱの基本的な特徴を記述
-- **パターン選択**: 25種類のパターンから選択、またはカスタム入力
-- **画像サイズ選択**: 1024x1024, 1024x1792, 1792x1024
-- **画質選択**: standard, hd
+- **パターン選択**: 複数行対応のパターンから選択、またはカスタム入力
+- **プロンプト内設定**: 画像サイズや画質をプロンプト内で柔軟に指定
+- **1枚生成**: 選択したパターンで画像を1枚生成
+- **全パターン一括生成**: 全てのパターンで画像を一括生成（進捗表示付き）
 - **リアルタイムプレビュー**: 生成された画像をブラウザで即座に確認
 - **ダウンロード**: 生成した画像を直接ダウンロード
+
+**新機能**：
+- OpenAI Responses APIを使用し、ベース画像を参考に新しい画像を生成可能
+- 複数行パターン対応で、より詳細な指示が可能
+- 全パターン一括生成で、複数バリエーションを効率的に作成
 
 ### 停止方法
 
@@ -280,11 +302,18 @@ docker compose build --no-cache
 
 ### 新しいパターンの追加
 
-`prompts/patterns.txt` に新しい行を追加するだけです：
+`prompts/patterns.txt` に**空白行で区切って**新しいパターンを追加します（複数行OK）：
 
 ```
-# あなたの新しいパターン
+# あなたの新しいパターン（複数行記述可能）
+The style is traditional Japanese art.
 The kappa is wearing a samurai armor and holding a katana.
+The scene is set in an ancient Japanese castle.
+Image size: 1024x1792, Quality: HD
+
+# 別のパターン（空白行で区切る）
+The style is modern digital art.
+The kappa is coding on a laptop.
 ```
 
 ### ベースプロンプトの編集
