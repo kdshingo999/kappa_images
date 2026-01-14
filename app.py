@@ -96,9 +96,9 @@ def generate_image_with_responses_api(
                     "image_url": img_uri
                 })
 
-        # Responses APIで画像生成
+        # Responses APIで画像生成（gpt-4.1を使用）
         response = client.responses.create(
-            model="gpt-image-1.5",
+            model="gpt-4.1",
             input=[
                 {
                     "role": "user",
@@ -107,8 +107,7 @@ def generate_image_with_responses_api(
             ],
             tools=[{
                 "type": "image_generation",
-                "input_fidelity": "high" if base_images else "low",
-                "action": "edit" if base_images else "generate"
+                "input_fidelity": "high" if base_images else "low"
             }]
         )
 
@@ -142,7 +141,7 @@ def save_image_to_file(image_bytes: bytes, prompt: str, pattern_number: int = No
 
     with open(info_filepath, "w", encoding="utf-8") as f:
         f.write(f"生成日時: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        f.write(f"モデル: gpt-image-1.5\n")
+        f.write(f"モデル: gpt-4.1 (Responses API with image_generation tool)\n")
         f.write(f"画像ファイル: {image_filename}\n")
         if pattern_number:
             f.write(f"パターン番号: {pattern_number}\n")
@@ -335,9 +334,9 @@ def main():
 
             # 生成情報の表示
             with st.expander("📋 生成情報"):
-                st.markdown(f"**モデル:** gpt-image-1.5")
+                st.markdown(f"**モデル:** gpt-4.1 (Responses API)")
                 if base_image_uris:
-                    st.markdown(f"**ベース画像:** {len(base_image_uris)}枚")
+                    st.markdown(f"**ベース画像:** {len(base_image_uris)}枚（高精度モード）")
                 else:
                     st.markdown(f"**ベース画像:** なし")
                 if pattern_number:
@@ -410,7 +409,7 @@ def main():
 
     # フッター
     st.markdown("---")
-    st.markdown("Made with ❤️ using OpenAI GPT Image 1.5 and Streamlit")
+    st.markdown("Made with ❤️ using OpenAI GPT-4.1 (Responses API) and Streamlit")
 
 
 if __name__ == "__main__":
