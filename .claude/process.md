@@ -20,11 +20,10 @@
 ---
 
 ## RECENT DONE（最新だけ残す）
+- [x] 一括生成機能の実装 — --allオプション追加、全パターン一括生成、進捗表示、エラーハンドリング
 - [x] プロンプト管理機能の実装 — base_prompt.txt, patterns.txt作成、generate_kappa.py修正、README更新完了
 - [x] グローバルgit config更新 — no-replyメールアドレスに変更
 - [x] プロジェクト初期設定 — Git初期化、GitHubリポジトリ作成、プッシュ完了
-- [x] Claude Code設定完了 — claude.yaml, process.md, CLAUDE.md配置
-- [x] GPT Image 1.5対応スクリプト作成 — かっぱ画像生成ツール実装
 
 ---
 

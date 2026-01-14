@@ -165,14 +165,17 @@ def main():
   # パターン一覧を表示
   python generate_kappa.py --list
 
+  # すべてのパターンで一括生成
+  python generate_kappa.py --all
+
   # パターン番号3を使って生成
   python generate_kappa.py --pattern 3
 
   # カスタムプロンプトで生成
   python generate_kappa.py --custom "かわいいかっぱが泳いでいる"
 
-  # 高画質で生成
-  python generate_kappa.py --pattern 5 --quality hd
+  # 高画質で一括生成
+  python generate_kappa.py --all --quality hd
 
   # カスタムサイズで生成
   python generate_kappa.py --pattern 1 --size 1024x1792
@@ -183,6 +186,11 @@ def main():
         "--list", "-l",
         action="store_true",
         help="利用可能なパターン一覧を表示"
+    )
+    parser.add_argument(
+        "--all", "-a",
+        action="store_true",
+        help="すべてのパターンで画像を一括生成"
     )
     parser.add_argument(
         "--pattern", "-p",
@@ -224,6 +232,43 @@ def main():
     # パターン一覧表示
     if args.list:
         list_patterns(patterns)
+        return
+
+    # すべてのパターンで一括生成
+    if args.all:
+        print(f"\n全{len(patterns)}パターンの画像を一括生成します...")
+        print(f"サイズ: {args.size}, 画質: {args.quality}")
+        print("=" * 60)
+
+        success_count = 0
+        failed_patterns = []
+
+        for i, pattern in enumerate(patterns, 1):
+            print(f"\n[{i}/{len(patterns)}] パターン#{i}: {pattern[:60]}...")
+            prompt = f"{base_prompt}\n{pattern}"
+
+            try:
+                generate_kappa_image(
+                    prompt=prompt,
+                    size=args.size,
+                    quality=args.quality,
+                    pattern_number=i
+                )
+                success_count += 1
+            except Exception as e:
+                print(f"⚠️  パターン#{i}の生成に失敗しました: {e}")
+                failed_patterns.append((i, pattern[:30]))
+
+        # 結果サマリー
+        print("\n" + "=" * 60)
+        print(f"一括生成完了!")
+        print(f"成功: {success_count}/{len(patterns)}")
+        if failed_patterns:
+            print(f"失敗: {len(failed_patterns)}/{len(patterns)}")
+            print("\n失敗したパターン:")
+            for num, desc in failed_patterns:
+                print(f"  - パターン#{num}: {desc}...")
+        print("=" * 60)
         return
 
     # プロンプトを構築

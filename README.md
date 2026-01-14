@@ -68,13 +68,28 @@ python generate_kappa.py --list
 
 利用可能なすべてのパターンが番号付きで表示されます。
 
-### 2. デフォルト実行（パターン#1を使用）
+### 2. すべてのパターンで一括生成
+
+```bash
+# すべてのパターン（25種類）の画像を一括生成
+python generate_kappa.py --all
+
+# 短縮形も使用可能
+python generate_kappa.py -a
+
+# 高画質で一括生成
+python generate_kappa.py --all --quality hd
+```
+
+**注意**: 一括生成は25枚の画像を生成するため、APIクレジットを多く消費します（standard品質で約$1.00、hd品質で約$2.00）。
+
+### 3. デフォルト実行（パターン#1を使用）
 
 ```bash
 python generate_kappa.py
 ```
 
-### 3. パターン番号を指定して生成
+### 4. パターン番号を指定して生成
 
 ```bash
 # パターン3を使用
@@ -84,7 +99,7 @@ python generate_kappa.py --pattern 3
 python generate_kappa.py -p 5
 ```
 
-### 4. カスタムプロンプトで生成
+### 5. カスタムプロンプトで生成
 
 ```bash
 # ベースプロンプト + カスタムプロンプト
@@ -94,7 +109,7 @@ python generate_kappa.py --custom "かわいいかっぱが泳いでいる"
 python generate_kappa.py -c "The kappa is reading a book under a tree."
 ```
 
-### 5. 画質やサイズを指定
+### 6. 画質やサイズを指定
 
 ```bash
 # 高画質で生成
@@ -112,6 +127,7 @@ python generate_kappa.py -p 10 -q hd -s 1792x1024
 | 引数 | 短縮形 | 説明 | デフォルト |
 |------|--------|------|-----------|
 | `--list` | `-l` | パターン一覧を表示 | - |
+| `--all` | `-a` | すべてのパターンで画像を一括生成 | - |
 | `--pattern N` | `-p N` | パターン番号を指定（1から始まる） | 1 |
 | `--custom "text"` | `-c "text"` | カスタムプロンプトを指定 | - |
 | `--size SIZE` | `-s SIZE` | 画像サイズ（1024x1024, 1024x1792, 1792x1024） | 1024x1024 |
