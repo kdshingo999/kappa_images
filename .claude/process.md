@@ -9,20 +9,24 @@
 ---
 
 ## NOW (DOING)
-- [ ] タスク名（1行で）
-  - 状況： 
-  - 次： （次の一手）
+- [ ] プロンプト管理機能のコミットとプッシュ
+  - 状況：実装完了、コミット準備中
+  - 次：変更をコミットしてGitHubにプッシュ
 
 ## NEXT (TODO)
-- [ ] タスク名（1行で） — 完了条件：○○
+- なし
 
 ## LATER / PARKED
-- [ ] 後で（今やらない理由を1行）
+- なし
 
 ---
 
 ## RECENT DONE（最新だけ残す）
-- [x] タスク名 — 何をしたかを1行
+- [x] プロンプト管理機能の実装 — base_prompt.txt, patterns.txt作成、generate_kappa.py修正、README更新完了
+- [x] グローバルgit config更新 — no-replyメールアドレスに変更
+- [x] プロジェクト初期設定 — Git初期化、GitHubリポジトリ作成、プッシュ完了
+- [x] Claude Code設定完了 — claude.yaml, process.md, CLAUDE.md配置
+- [x] GPT Image 1.5対応スクリプト作成 — かっぱ画像生成ツール実装
 
 ---
 

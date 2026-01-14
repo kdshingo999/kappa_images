@@ -1,0 +1,31 @@
+# パターン一覧
+# 1行に1パターンを記載してください
+# 空行と#で始まる行はコメントとして無視されます
+
+# スタイル系
+The style is charming and suitable for a mascot or children's character.
+The style is anime-inspired with bold outlines and vibrant colors.
+The style is realistic and detailed, like a nature documentary illustration.
+The style is minimalist with simple shapes and solid colors.
+The style is pixel art, retro 8-bit game character design.
+
+# ポーズ・アクション系
+The kappa is waving cheerfully with one hand raised.
+The kappa is sitting cross-legged, looking peaceful and meditative.
+The kappa is swimming gracefully in water.
+The kappa is holding a cucumber (their favorite food) and smiling.
+The kappa is jumping joyfully with arms spread wide.
+
+# シチュエーション系
+The kappa is standing by a Japanese riverside with cherry blossoms in the background.
+The kappa is in a modern city park, looking curious at urban life.
+The kappa is teaching young children about water safety.
+The kappa is working as a sushi chef in a traditional restaurant.
+The kappa is playing with colorful koi fish in a pond.
+
+# 季節・天候系
+The scene is set in spring with sakura petals falling around.
+The scene is set in summer with bright sunshine and blue skies.
+The scene is set in autumn with red and orange maple leaves.
+The scene is set in winter with gentle snowfall.
+The scene is set during a gentle rain shower.

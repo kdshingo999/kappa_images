@@ -7,6 +7,8 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #1529 | 3:45 AM | ✅ | Process Tracker Updated for Prompt Management Feature | ~270 |
+| #1523 | 3:42 AM | ✅ | Process Tracker Updated with Current Work Status | ~312 |
 | #1513 | 3:25 AM | ✅ | Comprehensive Project Guide for Claude Workspace | ~403 |
 | #1499 | 3:23 AM | ✅ | Claude Workspace Configuration File | ~386 |
 </claude-mem-context>
