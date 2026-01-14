@@ -9,9 +9,7 @@
 ---
 
 ## NOW (DOING)
-- [ ] Streamlit Web版の実装
-  - 状況：Docker Compose + Streamlit + 動的ポート割り当てで実装中
-  - 次：Dockerfile、docker-compose.yml、app.py、起動スクリプトを作成
+- なし
 
 ## NEXT (TODO)
 - なし
@@ -22,10 +20,9 @@
 ---
 
 ## RECENT DONE（最新だけ残す）
+- [x] Streamlit Web版の実装 — Docker Compose + 動的ポート割り当て、app.py、start.sh/stop.sh作成、README更新完了
 - [x] 一括生成機能の実装 — --allオプション追加、全パターン一括生成、進捗表示、エラーハンドリング
 - [x] プロンプト管理機能の実装 — base_prompt.txt, patterns.txt作成、generate_kappa.py修正、README更新完了
-- [x] グローバルgit config更新 — no-replyメールアドレスに変更
-- [x] プロジェクト初期設定 — Git初期化、GitHubリポジトリ作成、プッシュ完了
 
 ---
 
