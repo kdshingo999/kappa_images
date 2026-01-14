@@ -20,9 +20,9 @@
 ---
 
 ## RECENT DONE（最新だけ残す）
+- [x] Web版の高度機能追加 — ベース画像アップロード（最大5枚）、Responses API対応、複数行パターン、全パターン一括生成ボタン
 - [x] Streamlit Web版の実装 — Docker Compose + 動的ポート割り当て、app.py、start.sh/stop.sh作成、README更新完了
 - [x] 一括生成機能の実装 — --allオプション追加、全パターン一括生成、進捗表示、エラーハンドリング
-- [x] プロンプト管理機能の実装 — base_prompt.txt, patterns.txt作成、generate_kappa.py修正、README更新完了
 
 ---
 
